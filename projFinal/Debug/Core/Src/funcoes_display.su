@@ -1,0 +1,5 @@
+../Core/Src/funcoes_display.c:22:10:conv_7_seg	24	static
+../Core/Src/funcoes_display.c:54:6:serializar	24	static
+../Core/Src/funcoes_display.c:76:9:conv_num_ASC	16	static
+../Core/Src/funcoes_display.c:85:8:conv_ASC_num	16	static
+../Core/Src/funcoes_display.c:95:6:mostrar_no_display	24	static
