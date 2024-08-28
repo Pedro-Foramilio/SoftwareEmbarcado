@@ -44,13 +44,13 @@
 volatile uint32_t tIN_IRQ1 = 0;        // tempo entrada na última IRQ1
 volatile uint32_t tIN_IRQ2 = 0;        // tempo entrada na última IRQ2
 volatile uint32_t tIN_IRQ3 = 0;        // tempo entrada na última IRQ3
-int A1_foi_apertado = 0;
+extern int A1_foi_apertado;
 extern uint8_t BufOUT[];               // buffer output (global, def externo)
 extern size_t sizeBuffs;               // tam do buffer (def ext)
 extern int8_t modo;                    // modo de operacao (def externo)
 extern uint8_t modoLed;
 extern uint8_t modoDisplay;
-extern uint8_t enviandoDados;
+extern uint8_t recebendoDados;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -182,7 +182,14 @@ void EXTI1_IRQHandler(void)
 		tIN_IRQ1 = HAL_GetTick();          // tIN (ms) da ultima IRQ1
 		//setup modo 4s 2 valores
 		modoLed = LED_CRON;
-		modoDisplay = DISPLAY_INTRN;
+		if (recebendoDados == 0)
+		{
+			modoDisplay = DISPLAY_INTRN;
+		}
+		else
+		{
+			modoDisplay = DISPLAY_EXTRN;
+		}
 		A1_foi_apertado = 1;
 		HAL_GPIO_WritePin(GPIOB, LED4 | LED3 | LED2 | LED1, GPIO_PIN_SET);
 	}
@@ -205,18 +212,12 @@ void EXTI2_IRQHandler(void)
 	{
 		tIN_IRQ2 = HAL_GetTick();          // tIN (ms) da ultima IRQ2
 		//...  o que vc vai fazer aqui???
-		enviandoDados = 1;
-		if (A1_foi_apertado == 0)
-		{
-			//nada
-		}
-		else
-		{
-			//setup modo 2s 4 valores
-			modoLed = LED_CRON_EXT;
-			modoDisplay = DISPLAY_EXTRN;
-			HAL_GPIO_WritePin(GPIOB, LED4 | LED3 | LED2 | LED1, GPIO_PIN_RESET);
-		}
+		BufOUT[0] = REQSRV[0];
+		BufOUT[1] = REQSRV[1];
+		BufOUT[2] = REQSRV[2];
+		BufOUT[3] = REQSRV[3];
+		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+
 	}
 
   /* USER CODE END EXTI2_IRQn 0 */

@@ -69,7 +69,7 @@ uint32_t tinCrono = 0;                 // último tempo de entrada no cronômetr
 
 volatile uint8_t modoLed = STARTUP;
 volatile uint8_t modoDisplay = DISPLAY_INTRN;
-uint8_t enviandoDados = 0;
+uint8_t recebendoDados = 0;
 
 int8_t RA[] = {0, 3, 3, 9};
 
@@ -78,6 +78,7 @@ uint32_t tADC = 0;
 uint32_t startTime;
 uint8_t startupComplete = 0;
 
+int A1_foi_apertado = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -408,52 +409,79 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	__disable_irq();                   // desabilita IRQs
 
   // exemplo: se veio um valor iniciado com 'aXXXX", veio o valor do ADC
+	if (BufIN[0] == 's')
+	{
+		HAL_GPIO_WritePin(GPIOB, LED4 | LED3 | LED2 | LED1, GPIO_PIN_RESET);
+		modoDisplay = DISPLAY_EXTRN;
+		recebendoDados = 1;
+		if (A1_foi_apertado == 0)
+		{
+			modoLed = WFI;
+		}
+		else
+		{
+			//setup modo 2s 4 valores
+			modoLed = LED_CRON_EXT;
+		}
+	}
+
 	if (BufIN[0] == 'n')
 	{
 		modoDisplay = DISPLAY_INTRN;
-		modoLed = LED_CRON;
 		HAL_GPIO_WritePin(GPIOB, LED4 | LED3 | LED2 | LED1, GPIO_PIN_RESET);
+		recebendoDados = 0;
+		if (A1_foi_apertado == 0)
+		{
+			modoLed = WFI;
+		}
+		else
+		{
+			modoLed = LED_CRON;
+		}
+
 	}
 
 	if (BufIN[0]=='A')
 	{
 
-		ValAdcExt[0] = BufIN[1] - '0';  // '3' - '0' = 51 - 48 = 3
-		ValAdcExt[1] = BufIN[2] - '0';
-		ValAdcExt[2] = BufIN[3] - '0';
-		ValAdcExt[3] = BufIN[4] - '0';
+		ValAdcExt[0] = conv_ASC_num(BufIN[1]);
+		ValAdcExt[1] = conv_ASC_num(BufIN[2]);
+		ValAdcExt[2] = conv_ASC_num(BufIN[3]);
+		ValAdcExt[3] = conv_ASC_num(BufIN[4]);
 
 
 	}
 
 	if (BufIN[0]=='T')
 	{
-		CronoExt[0] = BufIN[1] - '0';
-		CronoExt[1] = BufIN[2] - '0';
-		CronoExt[2] = BufIN[3] - '0';
-		CronoExt[3] = BufIN[4] - '0';
+		CronoExt[0] = conv_ASC_num(BufIN[1]);
+		CronoExt[1] = conv_ASC_num(BufIN[2]);
+		CronoExt[2] = conv_ASC_num(BufIN[3]);
+		CronoExt[3] = conv_ASC_num(BufIN[4]);
 
 	}
 
 	if (BufIN[0] == 't')
 	{
 		BufOUT[0] = 'T';
-		BufOUT[1] = Crono[0] + '0';
-		BufOUT[2] = Crono[1] + '0';
-		BufOUT[3] = Crono[2] + '0';
-		BufOUT[4] = Crono[3] + '0';
+		BufOUT[1] = conv_num_ASC(Crono[0]);
+		BufOUT[2] = conv_num_ASC(Crono[1]);
+		BufOUT[3] = conv_num_ASC(Crono[2]);
+		BufOUT[4] = conv_num_ASC(Crono[3]);
 		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 	}
 
 	if (BufIN[0] == 'a')
 	{
 		BufOUT[0] = 'A';
-		BufOUT[1] = ValAdc[0] + '0';
-		BufOUT[2] = ValAdc[1] + '0';
-		BufOUT[3] = ValAdc[2] + '0';
-		BufOUT[4] = ValAdc[3] + '0';
+		BufOUT[1] = conv_num_ASC(ValAdc[0]);
+		BufOUT[2] = conv_num_ASC(ValAdc[1]);
+		BufOUT[3] = conv_num_ASC(ValAdc[2]);
+		BufOUT[4] = conv_num_ASC(ValAdc[3]);
 		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 	}
+
+
 
   	  __enable_irq();                      // volta habilitar IRQs
 
@@ -569,28 +597,34 @@ void fn_TaskDisplay(void const * argument)
 	  		  break;
 
 	  	  case DISPLAY_EXTRN:
-	  		if (modoLed == LED_CRON)
+	  		if (modoLed == WFI)
+	  		{
+	  			modoLed = LED_CRON_EXT;
+	  		}
+	  		else if (modoLed == LED_CRON)
 	  		{
 	  			modoLed = LED_ADC;
 	  		}
-
 	  		else if (modoLed == LED_ADC)
 	  		{
 	  			modoLed = LED_CRON_EXT;
 	  		}
-
-	  		//trocar para ADC
 	  		else if (modoLed == LED_CRON_EXT)
 	  		{
 	  			modoLed = LED_ADC_EXT;
 	  		}
-
-	  		//trocar para CRON
 	  		else if (modoLed == LED_ADC_EXT)
 	  		{
-	  			modoLed = LED_CRON;
+	  			if (A1_foi_apertado == 0)
+	  			{
+	  				modoLed = WFI;
+	  			}
+	  			else
+	  			{
+	  				modoLed = LED_CRON;
+	  			}
 	  		}
-	  		  break;
+	  		break; //break do case DISPLAY EXTRN
 	  }
 
 
@@ -655,10 +689,7 @@ void fn_Task_Varrer(void const * argument)
 	  		  		  break;
 	  		  	  case LED_CRON_EXT:
 
-	  		  		  BufOUT[0] = REQCRN[0];
-	  		  		  BufOUT[1] = REQCRN[1];
-	  		  		  BufOUT[2] = REQCRN[2];
-	  		  		  BufOUT[3] = REQCRN[3];
+	  		  		  STR_BUFF(REQCRN);
 	  		  		  HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 
 	  		  		  DspHex[0] = CronoExt[0];
@@ -668,11 +699,7 @@ void fn_Task_Varrer(void const * argument)
 	  		  		  ptoDec = 10;
 	  		  		  break;
 	  		  	  case LED_ADC_EXT:
-
-	  		  		  BufOUT[0] = REQADC[0];
-	  		  		  BufOUT[1] = REQADC[1];
-	  		  		  BufOUT[2] = REQADC[2];
-	  		  		  BufOUT[3] = REQADC[3];
+	  		  		  STR_BUFF(REQADC);
 	  		  		  HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 
 	  		  		  DspHex[0] = ValAdcExt[0];
