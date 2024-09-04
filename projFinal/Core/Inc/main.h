@@ -66,6 +66,12 @@ O intervalo entre solicitacoes deve ser < 100 ms (p/ atualizar decimo de seg).
 #define REQOFF "n0000"       // define a string para descartar servico
 #define MSGDND "p0000"       // define a string msg: "display não disponível"
 
+#define Q_SND_CRN 1
+#define Q_SND_ADC 2
+#define Q_REQ_CRN 3
+#define Q_REQ_ADC 4
+#define Q_REQ_SRV 5
+#define Q_REQ_OFF 6
 
 /* USER CODE END EC */
 

@@ -50,6 +50,8 @@ osThreadId defaultTaskHandle;
 osThreadId Task_MngLEDHandle;
 osThreadId TaskDisplayHandle;
 osThreadId Task_VarrerHandle;
+osThreadId Task_MngComnsHandle;
+osMessageQId Q_ReqsHandle;
 /* USER CODE BEGIN PV */
 // variáveis que todos vamos usar: buffers de entrada/saída na comunicação
 // buffers para entrada e saida de dados via USART
@@ -79,6 +81,9 @@ uint32_t startTime;
 uint8_t startupComplete = 0;
 
 int A1_foi_apertado = 0;
+
+BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -90,14 +95,26 @@ void StartDefaultTask(void const * argument);
 void fnTask_MngLED(void const * argument);
 void fn_TaskDisplay(void const * argument);
 void fn_Task_Varrer(void const * argument);
+void fn_Task_MngComns(void const * argument);
 
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
-
+void put_Q_ISR(uint16_t code);
+void put_Q(uint16_t code);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void put_Q_ISR(uint16_t code)
+{
+	xQueueSendFromISR(Q_ReqsHandle, &code,  &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+}
+void put_Q(uint16_t code)
+{
+	xQueueSend(Q_ReqsHandle, &code, ( TickType_t ) 0 );
+}
 
 /* USER CODE END 0 */
 
@@ -150,6 +167,11 @@ int main(void)
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* definition and creation of Q_Reqs */
+  osMessageQDef(Q_Reqs, 16, uint16_t);
+  Q_ReqsHandle = osMessageCreate(osMessageQ(Q_Reqs), NULL);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -170,6 +192,10 @@ int main(void)
   /* definition and creation of Task_Varrer */
   osThreadDef(Task_Varrer, fn_Task_Varrer, osPriorityIdle, 0, 64);
   Task_VarrerHandle = osThreadCreate(osThread(Task_Varrer), NULL);
+
+  /* definition and creation of Task_MngComns */
+  osThreadDef(Task_MngComns, fn_Task_MngComns, osPriorityIdle, 0, 64);
+  Task_MngComnsHandle = osThreadCreate(osThread(Task_MngComns), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -407,7 +433,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   // o que veio na UART? aqui vc vai fazer testes p/ identificar mensagens
 
 	__disable_irq();                   // desabilita IRQs
-
   // exemplo: se veio um valor iniciado com 'aXXXX", veio o valor do ADC
 	if (BufIN[0] == 's')
 	{
@@ -463,22 +488,24 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 	if (BufIN[0] == 't')
 	{
-		BufOUT[0] = 'T';
-		BufOUT[1] = conv_num_ASC(Crono[0]);
-		BufOUT[2] = conv_num_ASC(Crono[1]);
-		BufOUT[3] = conv_num_ASC(Crono[2]);
-		BufOUT[4] = conv_num_ASC(Crono[3]);
-		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+		put_Q_ISR((uint16_t) Q_SND_CRN);
+		//BufOUT[0] = 'T';
+		//BufOUT[1] = conv_num_ASC(Crono[0]);
+		//BufOUT[2] = conv_num_ASC(Crono[1]);
+		//BufOUT[3] = conv_num_ASC(Crono[2]);
+		//BufOUT[4] = conv_num_ASC(Crono[3]);
+		//HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 	}
 
 	if (BufIN[0] == 'a')
 	{
-		BufOUT[0] = 'A';
-		BufOUT[1] = conv_num_ASC(ValAdc[0]);
-		BufOUT[2] = conv_num_ASC(ValAdc[1]);
-		BufOUT[3] = conv_num_ASC(ValAdc[2]);
-		BufOUT[4] = conv_num_ASC(ValAdc[3]);
-		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+		put_Q_ISR((uint16_t) Q_SND_ADC);
+		//BufOUT[0] = 'A';
+		//BufOUT[1] = conv_num_ASC(ValAdc[0]);
+		//BufOUT[2] = conv_num_ASC(ValAdc[1]);
+		//BufOUT[3] = conv_num_ASC(ValAdc[2]);
+		//BufOUT[4] = conv_num_ASC(ValAdc[3]);
+		//HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 	}
 
 
@@ -689,8 +716,9 @@ void fn_Task_Varrer(void const * argument)
 	  		  		  break;
 	  		  	  case LED_CRON_EXT:
 
-	  		  		  STR_BUFF(REQCRN);
-	  		  		  HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+	  		  		  //STR_BUFF(REQCRN);
+	  		  		  //HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+	  		  		  put_Q((uint16_t) Q_REQ_CRN);
 
 	  		  		  DspHex[0] = CronoExt[0];
 	  		  		  DspHex[1] = CronoExt[1];
@@ -699,8 +727,9 @@ void fn_Task_Varrer(void const * argument)
 	  		  		  ptoDec = 10;
 	  		  		  break;
 	  		  	  case LED_ADC_EXT:
-	  		  		  STR_BUFF(REQADC);
-	  		  		  HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+	  		  		  //STR_BUFF(REQADC);
+	  		  		  //HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+	  		  		  put_Q((uint16_t) Q_REQ_ADC);
 
 	  		  		  DspHex[0] = ValAdcExt[0];
 	  		  		  DspHex[1] = ValAdcExt[1];
@@ -713,6 +742,75 @@ void fn_Task_Varrer(void const * argument)
 	  osDelay(DT_VARRE_DISPLAY);
   }
   /* USER CODE END fn_Task_Varrer */
+}
+
+/* USER CODE BEGIN Header_fn_Task_MngComns */
+/**
+* @brief Function implementing the Task_MngComns thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_fn_Task_MngComns */
+void fn_Task_MngComns(void const * argument)
+{
+  /* USER CODE BEGIN fn_Task_MngComns */
+  /* Infinite loop */
+	uint16_t msg = 0;
+	BaseType_t statusReturn = pdFALSE;
+  for(;;)
+  {
+	  statusReturn = pdFALSE;
+	  if (HAL_UART_GetState(&huart1) == HAL_UART_STATE_BUSY_TX)
+	  {
+		  //busy -> nao enviar nada agora
+	  }
+
+	  else if (uxQueueMessagesWaiting(Q_ReqsHandle) > 0)
+	  {
+		  statusReturn = xQueueReceive(Q_ReqsHandle, &msg, ( TickType_t ) 10);
+
+		  if (statusReturn == pdTRUE)
+		  {
+			  switch (msg)
+			  {
+				  case Q_SND_CRN:
+					  BufOUT[0] = 'T';
+					  BufOUT[1] = conv_num_ASC(Crono[0]);
+					  BufOUT[2] = conv_num_ASC(Crono[1]);
+					  BufOUT[3] = conv_num_ASC(Crono[2]);
+					  BufOUT[4] = conv_num_ASC(Crono[3]);
+					  break;
+				  case Q_SND_ADC:
+					  BufOUT[0] = 'A';
+					  BufOUT[1] = conv_num_ASC(ValAdc[0]);
+					  BufOUT[2] = conv_num_ASC(ValAdc[1]);
+					  BufOUT[3] = conv_num_ASC(ValAdc[2]);
+					  BufOUT[4] = conv_num_ASC(ValAdc[3]);
+					  break;
+				  case Q_REQ_CRN:
+					  STR_BUFF(REQCRN);
+					  break;
+				  case Q_REQ_ADC:
+					  STR_BUFF(REQADC);
+					  break;
+				  case Q_REQ_SRV:
+					  STR_BUFF(REQSRV);
+					  break;
+				  case Q_REQ_OFF:
+					  STR_BUFF(REQOFF);
+					  break;
+			  }
+			  HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+		  }
+
+	  }
+	  else
+	  {
+		  //tx livre -> fila vazia -> sem reqs
+	  }
+	  osDelay(1);
+  }
+  /* USER CODE END fn_Task_MngComns */
 }
 
 /**

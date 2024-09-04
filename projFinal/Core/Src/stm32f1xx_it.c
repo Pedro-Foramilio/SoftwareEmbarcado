@@ -51,10 +51,14 @@ extern int8_t modo;                    // modo de operacao (def externo)
 extern uint8_t modoLed;
 extern uint8_t modoDisplay;
 extern uint8_t recebendoDados;
+extern osMessageQId Q_ReqsHandle;
+extern BaseType_t xHigherPriorityTaskWoken;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
+
+void insert_into_Q(uint16_t code);
 
 /* USER CODE END PFP */
 
@@ -211,12 +215,14 @@ void EXTI2_IRQHandler(void)
 	if((HAL_GetTick()-tIN_IRQ2) > DT_DEBOUNCING)
 	{
 		tIN_IRQ2 = HAL_GetTick();          // tIN (ms) da ultima IRQ2
+
 		//...  o que vc vai fazer aqui???
-		BufOUT[0] = REQSRV[0];
-		BufOUT[1] = REQSRV[1];
-		BufOUT[2] = REQSRV[2];
-		BufOUT[3] = REQSRV[3];
-		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+		insert_into_Q((uint16_t) Q_REQ_SRV);
+		//BufOUT[0] = REQSRV[0];
+		//BufOUT[1] = REQSRV[1];
+		//BufOUT[2] = REQSRV[2];
+		//BufOUT[3] = REQSRV[3];
+		//HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 
 	}
 
@@ -238,11 +244,12 @@ void EXTI3_IRQHandler(void)
 	{
 		tIN_IRQ3 = HAL_GetTick();          // tIN (ms) da ultima IRQ3
 		//...  o que vc vai fazer aqui???
-		BufOUT[0] = REQOFF[0];
-		BufOUT[1] = REQOFF[1];
-		BufOUT[2] = REQOFF[2];
-		BufOUT[3] = REQOFF[3];
-		HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
+		insert_into_Q((uint16_t) Q_REQ_OFF);
+		//BufOUT[0] = REQOFF[0];
+		//BufOUT[1] = REQOFF[1];
+		//BufOUT[2] = REQOFF[2];
+		//BufOUT[3] = REQOFF[3];
+		//HAL_UART_Transmit_IT(&huart1, BufOUT, sizeBuffs);
 	}
 
   /* USER CODE END EXTI3_IRQn 0 */
@@ -295,5 +302,9 @@ void USART1_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+void insert_into_Q(uint16_t code)
+{
+	xQueueSendFromISR(Q_ReqsHandle, &code,  &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
 /* USER CODE END 1 */
