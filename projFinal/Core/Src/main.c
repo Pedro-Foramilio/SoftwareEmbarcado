@@ -469,20 +469,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	if (BufIN[0]=='A')
 	{
 
-		ValAdcExt[0] = conv_ASC_num(BufIN[1]);
-		ValAdcExt[1] = conv_ASC_num(BufIN[2]);
-		ValAdcExt[2] = conv_ASC_num(BufIN[3]);
-		ValAdcExt[3] = conv_ASC_num(BufIN[4]);
+		ValAdcExt[0] = conv_ASC_num(BufIN[4]);
+		ValAdcExt[1] = conv_ASC_num(BufIN[3]);
+		ValAdcExt[2] = conv_ASC_num(BufIN[2]);
+		ValAdcExt[3] = conv_ASC_num(BufIN[1]);
 
 
 	}
 
 	if (BufIN[0]=='T')
 	{
-		CronoExt[0] = conv_ASC_num(BufIN[1]);
-		CronoExt[1] = conv_ASC_num(BufIN[2]);
-		CronoExt[2] = conv_ASC_num(BufIN[3]);
-		CronoExt[3] = conv_ASC_num(BufIN[4]);
+		CronoExt[0] = conv_ASC_num(BufIN[4]);
+		CronoExt[1] = conv_ASC_num(BufIN[3]);
+		CronoExt[2] = conv_ASC_num(BufIN[2]);
+		CronoExt[3] = conv_ASC_num(BufIN[1]);
 
 	}
 
@@ -775,17 +775,17 @@ void fn_Task_MngComns(void const * argument)
 			  {
 				  case Q_SND_CRN:
 					  BufOUT[0] = 'T';
-					  BufOUT[1] = conv_num_ASC(Crono[0]);
-					  BufOUT[2] = conv_num_ASC(Crono[1]);
-					  BufOUT[3] = conv_num_ASC(Crono[2]);
-					  BufOUT[4] = conv_num_ASC(Crono[3]);
+					  BufOUT[1] = conv_num_ASC(Crono[3]);
+					  BufOUT[2] = conv_num_ASC(Crono[2]);
+					  BufOUT[3] = conv_num_ASC(Crono[1]);
+					  BufOUT[4] = conv_num_ASC(Crono[0]);
 					  break;
 				  case Q_SND_ADC:
 					  BufOUT[0] = 'A';
-					  BufOUT[1] = conv_num_ASC(ValAdc[0]);
-					  BufOUT[2] = conv_num_ASC(ValAdc[1]);
-					  BufOUT[3] = conv_num_ASC(ValAdc[2]);
-					  BufOUT[4] = conv_num_ASC(ValAdc[3]);
+					  BufOUT[1] = conv_num_ASC(ValAdc[3]);
+					  BufOUT[2] = conv_num_ASC(ValAdc[2]);
+					  BufOUT[3] = conv_num_ASC(ValAdc[1]);
+					  BufOUT[4] = conv_num_ASC(ValAdc[0]);
 					  break;
 				  case Q_REQ_CRN:
 					  STR_BUFF(REQCRN);

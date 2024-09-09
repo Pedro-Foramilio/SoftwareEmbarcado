@@ -1576,36 +1576,36 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8000ac2:	d123      	bne.n	8000b0c <HAL_UART_RxCpltCallback+0xc8>
 	{
 
-		ValAdcExt[0] = conv_ASC_num(BufIN[1]);
+		ValAdcExt[0] = conv_ASC_num(BufIN[4]);
  8000ac4:	4b33      	ldr	r3, [pc, #204]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000ac6:	785b      	ldrb	r3, [r3, #1]
+ 8000ac6:	791b      	ldrb	r3, [r3, #4]
  8000ac8:	4618      	mov	r0, r3
  8000aca:	f7ff fc3e 	bl	800034a <conv_ASC_num>
  8000ace:	4603      	mov	r3, r0
  8000ad0:	461a      	mov	r2, r3
  8000ad2:	4b36      	ldr	r3, [pc, #216]	@ (8000bac <HAL_UART_RxCpltCallback+0x168>)
  8000ad4:	701a      	strb	r2, [r3, #0]
-		ValAdcExt[1] = conv_ASC_num(BufIN[2]);
+		ValAdcExt[1] = conv_ASC_num(BufIN[3]);
  8000ad6:	4b2f      	ldr	r3, [pc, #188]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000ad8:	789b      	ldrb	r3, [r3, #2]
+ 8000ad8:	78db      	ldrb	r3, [r3, #3]
  8000ada:	4618      	mov	r0, r3
  8000adc:	f7ff fc35 	bl	800034a <conv_ASC_num>
  8000ae0:	4603      	mov	r3, r0
  8000ae2:	461a      	mov	r2, r3
  8000ae4:	4b31      	ldr	r3, [pc, #196]	@ (8000bac <HAL_UART_RxCpltCallback+0x168>)
  8000ae6:	705a      	strb	r2, [r3, #1]
-		ValAdcExt[2] = conv_ASC_num(BufIN[3]);
+		ValAdcExt[2] = conv_ASC_num(BufIN[2]);
  8000ae8:	4b2a      	ldr	r3, [pc, #168]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000aea:	78db      	ldrb	r3, [r3, #3]
+ 8000aea:	789b      	ldrb	r3, [r3, #2]
  8000aec:	4618      	mov	r0, r3
  8000aee:	f7ff fc2c 	bl	800034a <conv_ASC_num>
  8000af2:	4603      	mov	r3, r0
  8000af4:	461a      	mov	r2, r3
  8000af6:	4b2d      	ldr	r3, [pc, #180]	@ (8000bac <HAL_UART_RxCpltCallback+0x168>)
  8000af8:	709a      	strb	r2, [r3, #2]
-		ValAdcExt[3] = conv_ASC_num(BufIN[4]);
+		ValAdcExt[3] = conv_ASC_num(BufIN[1]);
  8000afa:	4b26      	ldr	r3, [pc, #152]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000afc:	791b      	ldrb	r3, [r3, #4]
+ 8000afc:	785b      	ldrb	r3, [r3, #1]
  8000afe:	4618      	mov	r0, r3
  8000b00:	f7ff fc23 	bl	800034a <conv_ASC_num>
  8000b04:	4603      	mov	r3, r0
@@ -1622,36 +1622,36 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8000b10:	2b54      	cmp	r3, #84	@ 0x54
  8000b12:	d123      	bne.n	8000b5c <HAL_UART_RxCpltCallback+0x118>
 	{
-		CronoExt[0] = conv_ASC_num(BufIN[1]);
+		CronoExt[0] = conv_ASC_num(BufIN[4]);
  8000b14:	4b1f      	ldr	r3, [pc, #124]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000b16:	785b      	ldrb	r3, [r3, #1]
+ 8000b16:	791b      	ldrb	r3, [r3, #4]
  8000b18:	4618      	mov	r0, r3
  8000b1a:	f7ff fc16 	bl	800034a <conv_ASC_num>
  8000b1e:	4603      	mov	r3, r0
  8000b20:	461a      	mov	r2, r3
  8000b22:	4b23      	ldr	r3, [pc, #140]	@ (8000bb0 <HAL_UART_RxCpltCallback+0x16c>)
  8000b24:	701a      	strb	r2, [r3, #0]
-		CronoExt[1] = conv_ASC_num(BufIN[2]);
+		CronoExt[1] = conv_ASC_num(BufIN[3]);
  8000b26:	4b1b      	ldr	r3, [pc, #108]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000b28:	789b      	ldrb	r3, [r3, #2]
+ 8000b28:	78db      	ldrb	r3, [r3, #3]
  8000b2a:	4618      	mov	r0, r3
  8000b2c:	f7ff fc0d 	bl	800034a <conv_ASC_num>
  8000b30:	4603      	mov	r3, r0
  8000b32:	461a      	mov	r2, r3
  8000b34:	4b1e      	ldr	r3, [pc, #120]	@ (8000bb0 <HAL_UART_RxCpltCallback+0x16c>)
  8000b36:	705a      	strb	r2, [r3, #1]
-		CronoExt[2] = conv_ASC_num(BufIN[3]);
+		CronoExt[2] = conv_ASC_num(BufIN[2]);
  8000b38:	4b16      	ldr	r3, [pc, #88]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000b3a:	78db      	ldrb	r3, [r3, #3]
+ 8000b3a:	789b      	ldrb	r3, [r3, #2]
  8000b3c:	4618      	mov	r0, r3
  8000b3e:	f7ff fc04 	bl	800034a <conv_ASC_num>
  8000b42:	4603      	mov	r3, r0
  8000b44:	461a      	mov	r2, r3
  8000b46:	4b1a      	ldr	r3, [pc, #104]	@ (8000bb0 <HAL_UART_RxCpltCallback+0x16c>)
  8000b48:	709a      	strb	r2, [r3, #2]
-		CronoExt[3] = conv_ASC_num(BufIN[4]);
+		CronoExt[3] = conv_ASC_num(BufIN[1]);
  8000b4a:	4b12      	ldr	r3, [pc, #72]	@ (8000b94 <HAL_UART_RxCpltCallback+0x150>)
- 8000b4c:	791b      	ldrb	r3, [r3, #4]
+ 8000b4c:	785b      	ldrb	r3, [r3, #1]
  8000b4e:	4618      	mov	r0, r3
  8000b50:	f7ff fbfb 	bl	800034a <conv_ASC_num>
  8000b54:	4603      	mov	r3, r0
@@ -2370,36 +2370,36 @@ void fn_Task_MngComns(void const * argument)
  8000fd4:	4b47      	ldr	r3, [pc, #284]	@ (80010f4 <fn_Task_MngComns+0x198>)
  8000fd6:	2254      	movs	r2, #84	@ 0x54
  8000fd8:	701a      	strb	r2, [r3, #0]
-					  BufOUT[1] = conv_num_ASC(Crono[0]);
+					  BufOUT[1] = conv_num_ASC(Crono[3]);
  8000fda:	4b47      	ldr	r3, [pc, #284]	@ (80010f8 <fn_Task_MngComns+0x19c>)
- 8000fdc:	f993 3000 	ldrsb.w	r3, [r3]
+ 8000fdc:	f993 3003 	ldrsb.w	r3, [r3, #3]
  8000fe0:	4618      	mov	r0, r3
  8000fe2:	f7ff f99b 	bl	800031c <conv_num_ASC>
  8000fe6:	4603      	mov	r3, r0
  8000fe8:	461a      	mov	r2, r3
  8000fea:	4b42      	ldr	r3, [pc, #264]	@ (80010f4 <fn_Task_MngComns+0x198>)
  8000fec:	705a      	strb	r2, [r3, #1]
-					  BufOUT[2] = conv_num_ASC(Crono[1]);
+					  BufOUT[2] = conv_num_ASC(Crono[2]);
  8000fee:	4b42      	ldr	r3, [pc, #264]	@ (80010f8 <fn_Task_MngComns+0x19c>)
- 8000ff0:	f993 3001 	ldrsb.w	r3, [r3, #1]
+ 8000ff0:	f993 3002 	ldrsb.w	r3, [r3, #2]
  8000ff4:	4618      	mov	r0, r3
  8000ff6:	f7ff f991 	bl	800031c <conv_num_ASC>
  8000ffa:	4603      	mov	r3, r0
  8000ffc:	461a      	mov	r2, r3
  8000ffe:	4b3d      	ldr	r3, [pc, #244]	@ (80010f4 <fn_Task_MngComns+0x198>)
  8001000:	709a      	strb	r2, [r3, #2]
-					  BufOUT[3] = conv_num_ASC(Crono[2]);
+					  BufOUT[3] = conv_num_ASC(Crono[1]);
  8001002:	4b3d      	ldr	r3, [pc, #244]	@ (80010f8 <fn_Task_MngComns+0x19c>)
- 8001004:	f993 3002 	ldrsb.w	r3, [r3, #2]
+ 8001004:	f993 3001 	ldrsb.w	r3, [r3, #1]
  8001008:	4618      	mov	r0, r3
  800100a:	f7ff f987 	bl	800031c <conv_num_ASC>
  800100e:	4603      	mov	r3, r0
  8001010:	461a      	mov	r2, r3
  8001012:	4b38      	ldr	r3, [pc, #224]	@ (80010f4 <fn_Task_MngComns+0x198>)
  8001014:	70da      	strb	r2, [r3, #3]
-					  BufOUT[4] = conv_num_ASC(Crono[3]);
+					  BufOUT[4] = conv_num_ASC(Crono[0]);
  8001016:	4b38      	ldr	r3, [pc, #224]	@ (80010f8 <fn_Task_MngComns+0x19c>)
- 8001018:	f993 3003 	ldrsb.w	r3, [r3, #3]
+ 8001018:	f993 3000 	ldrsb.w	r3, [r3]
  800101c:	4618      	mov	r0, r3
  800101e:	f7ff f97d 	bl	800031c <conv_num_ASC>
  8001022:	4603      	mov	r3, r0
@@ -2413,36 +2413,36 @@ void fn_Task_MngComns(void const * argument)
  800102c:	4b31      	ldr	r3, [pc, #196]	@ (80010f4 <fn_Task_MngComns+0x198>)
  800102e:	2241      	movs	r2, #65	@ 0x41
  8001030:	701a      	strb	r2, [r3, #0]
-					  BufOUT[1] = conv_num_ASC(ValAdc[0]);
+					  BufOUT[1] = conv_num_ASC(ValAdc[3]);
  8001032:	4b32      	ldr	r3, [pc, #200]	@ (80010fc <fn_Task_MngComns+0x1a0>)
- 8001034:	f993 3000 	ldrsb.w	r3, [r3]
+ 8001034:	f993 3003 	ldrsb.w	r3, [r3, #3]
  8001038:	4618      	mov	r0, r3
  800103a:	f7ff f96f 	bl	800031c <conv_num_ASC>
  800103e:	4603      	mov	r3, r0
  8001040:	461a      	mov	r2, r3
  8001042:	4b2c      	ldr	r3, [pc, #176]	@ (80010f4 <fn_Task_MngComns+0x198>)
  8001044:	705a      	strb	r2, [r3, #1]
-					  BufOUT[2] = conv_num_ASC(ValAdc[1]);
+					  BufOUT[2] = conv_num_ASC(ValAdc[2]);
  8001046:	4b2d      	ldr	r3, [pc, #180]	@ (80010fc <fn_Task_MngComns+0x1a0>)
- 8001048:	f993 3001 	ldrsb.w	r3, [r3, #1]
+ 8001048:	f993 3002 	ldrsb.w	r3, [r3, #2]
  800104c:	4618      	mov	r0, r3
  800104e:	f7ff f965 	bl	800031c <conv_num_ASC>
  8001052:	4603      	mov	r3, r0
  8001054:	461a      	mov	r2, r3
  8001056:	4b27      	ldr	r3, [pc, #156]	@ (80010f4 <fn_Task_MngComns+0x198>)
  8001058:	709a      	strb	r2, [r3, #2]
-					  BufOUT[3] = conv_num_ASC(ValAdc[2]);
+					  BufOUT[3] = conv_num_ASC(ValAdc[1]);
  800105a:	4b28      	ldr	r3, [pc, #160]	@ (80010fc <fn_Task_MngComns+0x1a0>)
- 800105c:	f993 3002 	ldrsb.w	r3, [r3, #2]
+ 800105c:	f993 3001 	ldrsb.w	r3, [r3, #1]
  8001060:	4618      	mov	r0, r3
  8001062:	f7ff f95b 	bl	800031c <conv_num_ASC>
  8001066:	4603      	mov	r3, r0
  8001068:	461a      	mov	r2, r3
  800106a:	4b22      	ldr	r3, [pc, #136]	@ (80010f4 <fn_Task_MngComns+0x198>)
  800106c:	70da      	strb	r2, [r3, #3]
-					  BufOUT[4] = conv_num_ASC(ValAdc[3]);
+					  BufOUT[4] = conv_num_ASC(ValAdc[0]);
  800106e:	4b23      	ldr	r3, [pc, #140]	@ (80010fc <fn_Task_MngComns+0x1a0>)
- 8001070:	f993 3003 	ldrsb.w	r3, [r3, #3]
+ 8001070:	f993 3000 	ldrsb.w	r3, [r3]
  8001074:	4618      	mov	r0, r3
  8001076:	f7ff f951 	bl	800031c <conv_num_ASC>
  800107a:	4603      	mov	r3, r0
